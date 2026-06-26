@@ -349,6 +349,17 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-body);
 .sale-title{font-family:var(--font-display);font-size:18px;letter-spacing:2px;color:var(--good);
   font-weight:700;margin-bottom:12px;}
 .sale-body{font-size:16px;color:var(--ink2);line-height:1.6;margin-bottom:20px;}
+/* save code modal */
+#savecode-modal{max-width:460px;text-align:left;}
+#savecode-modal h2{text-align:center;}
+.sc-note{font-size:13.5px;color:var(--ink2);line-height:1.55;margin-bottom:16px;}
+.sc-lbl{font-family:var(--font-display);font-size:10px;letter-spacing:1.5px;
+  color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.sc-area{width:100%;height:70px;resize:none;font-family:var(--font-display);font-size:11px;
+  line-height:1.4;color:var(--ink);background:var(--soft);border:1.5px solid var(--line);
+  border-radius:8px;padding:9px 11px;word-break:break-all;}
+.sc-btn{margin-top:8px;width:100%;font-size:12px;padding:10px;}
+.sc-msg{font-family:var(--font-display);font-size:12px;text-align:center;margin-top:12px;min-height:16px;}
 
 /* BAG split layout */
 .bag-split{display:grid;grid-template-columns:180px 1fr;gap:16px;}
@@ -535,6 +546,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-body);
 .home-tab{font-family:var(--font-display);font-size:13px;letter-spacing:2px;
   padding:12px 22px;border-radius:12px;border:2px solid var(--line);background:var(--panel);
   color:var(--muted);cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:8px;}
+.savecode-hint{max-width:300px;margin:8px auto 0;text-align:center;font-size:12px;
+  color:var(--muted2);line-height:1.5;}
 .reset-link{display:block;margin:26px auto 0;font-family:var(--font-display);font-size:10px;
   letter-spacing:1px;color:var(--muted2);background:none;border:none;cursor:pointer;opacity:.7;}
 .reset-link:hover{color:var(--bad);opacity:1;text-decoration:underline;}
@@ -569,6 +582,30 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-body);
 .music-opt:hover{background:var(--soft);color:var(--purple);}
 .music-opt.on{background:var(--purple);color:#fff;}
 .music-opt.mute-opt{border-top:1px solid var(--line);margin-top:2px;padding-top:9px;}
+/* floating debug panel, bottom-right (raised above the music menu) */
+#debug-dock{position:fixed;bottom:60px;right:14px;z-index:120;text-align:right;}
+#debug-toggle{font-family:var(--font-display);font-size:12px;letter-spacing:1px;
+  background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:7px 12px;
+  color:var(--muted);cursor:pointer;box-shadow:0 3px 14px rgba(150,40,200,.2);}
+#debug-toggle:hover{border-color:var(--purple);color:var(--purple);}
+.debug-panel{position:absolute;bottom:calc(100% + 8px);right:0;width:248px;text-align:left;
+  background:var(--panel);border:2px solid var(--purple);border-radius:12px;padding:14px;
+  box-shadow:0 6px 24px rgba(150,40,200,.32);}
+.debug-panel h4{font-family:var(--font-display);font-size:11px;letter-spacing:2px;color:var(--purple);
+  margin-bottom:10px;text-transform:uppercase;}
+.debug-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-bottom:12px;}
+.debug-field{display:flex;flex-direction:column;gap:3px;}
+.debug-field label{font-family:var(--font-display);font-size:8px;letter-spacing:.5px;color:var(--muted2);text-transform:uppercase;}
+.debug-field input{font-family:var(--font-body);font-size:14px;padding:5px 7px;border:1.5px solid var(--line);
+  border-radius:6px;background:var(--soft);color:var(--ink);width:100%;}
+.debug-btns{display:flex;flex-direction:column;gap:7px;}
+.debug-btns button{font-family:var(--font-display);font-size:11px;letter-spacing:1px;padding:8px;
+  border:none;border-radius:8px;cursor:pointer;color:#fff;font-weight:700;}
+.dbg-apply{background:linear-gradient(135deg,var(--pink),var(--purple));}
+.dbg-win{background:var(--cyan);}
+.dbg-horizon{background:var(--sodium);}
+.dbg-art{background:var(--good);}
+.debug-note{font-size:10px;color:var(--muted2);margin-top:8px;line-height:1.45;}
 /* ─── Chloe Coins store / hints ─── */
 .coin-balance{font-family:var(--font-display);font-size:13px;color:var(--ink2);}
 .coin-balance strong{color:var(--purple);}
@@ -675,6 +712,22 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-body);
     <div class="sale-title">GOING OUT OF BUSINESS</div>
     <div class="sale-body">It's you're lucky day! This store is going out of business. All items are 50% off.</div>
     <button class="pg-btn" onclick="document.getElementById('sale-overlay').classList.remove('show')">SHOP THE SALE →</button>
+  </div>
+</div>
+
+<!-- Save code (backup / restore progress) -->
+<div class="overlay" id="savecode-overlay" style="z-index:970;">
+  <div class="modal" id="savecode-modal">
+    <h2>💾 SAVE CODE</h2>
+    <p class="sc-note">Browsers can wipe your saved progress between visits. Copy this code to back it up, and paste it back anytime to restore your artifacts, achievements, coins, and outfits.</p>
+    <div class="sc-lbl">YOUR CODE — copy &amp; keep it safe</div>
+    <textarea id="savecode-out" class="sc-area" readonly onclick="this.select()"></textarea>
+    <button class="pg-btn sc-btn" onclick="copySaveCode()">📋 COPY CODE</button>
+    <div class="sc-lbl" style="margin-top:14px;">RESTORE FROM A CODE</div>
+    <textarea id="savecode-in" class="sc-area" placeholder="Paste a save code here, then tap Restore"></textarea>
+    <button class="pg-btn sc-btn" onclick="doImportSave()">♻ RESTORE PROGRESS</button>
+    <div id="savecode-msg" class="sc-msg"></div>
+    <button class="modal-close" onclick="document.getElementById('savecode-overlay').classList.remove('show')">CLOSE</button>
   </div>
 </div>
 
@@ -8218,6 +8271,90 @@ function chooseTheme(i) {
 }
 
 // ════════════════════════════════════════════════════
+//  DEBUG MODE — edit live stats mid-game to test outcomes
+// ════════════════════════════════════════════════════
+function toggleDebug() {
+  const p = document.getElementById('debug-panel');
+  if (!p) return;
+  if (p.style.display === 'block') { p.style.display = 'none'; return; }
+  renderDebugPanel();
+  p.style.display = 'block';
+}
+function dbgField(label, id, val) {
+  return `<div class="debug-field"><label>${label}</label><input id="${id}" type="number" value="${val}"></div>`;
+}
+function renderDebugPanel() {
+  const p = document.getElementById('debug-panel');
+  if (!p) return;
+  if (typeof G === 'undefined' || !G || !G.chloe) {
+    p.innerHTML = '<h4>🐞 Debug</h4><div class="debug-note">Start a game first, then reopen to edit stats.</div>';
+    return;
+  }
+  const c = G.chloe;
+  p.innerHTML = `<h4>🐞 Debug — Edit Stats</h4>
+    <div class="debug-grid">
+      ${dbgField('Health','dbg-health',c.health)}
+      ${dbgField('Focus','dbg-focus',c.focus)}
+      ${dbgField('Morale','dbg-morale',c.morale)}
+      ${dbgField('Sodium','dbg-sodium',c.sodium)}
+      ${dbgField('Stress','dbg-stress',c.stress)}
+      ${dbgField('Gas','dbg-gas',c.gas)}
+      ${dbgField('Money $','dbg-money',c.money)}
+      ${dbgField('Romance','dbg-romance',(c.origins_romance ?? 99))}
+      ${dbgField('Cowboy HP','dbg-cowboy',(G.cowboy ? G.cowboy.health : 100))}
+      ${dbgField('Mile','dbg-mile',G.mile)}
+    </div>
+    <div class="debug-btns">
+      <button class="dbg-apply" onclick="applyDebug()">APPLY STATS</button>
+      <button class="dbg-win" onclick="debugWin()">↗ FORCE LA / ENDING</button>
+      <button class="dbg-horizon" onclick="debugHorizon()">🧂 FORCE SODIUM HORIZON</button>
+      <button class="dbg-art" onclick="debugUnlockArtifacts()">🏆 UNLOCK ALL ARTIFACTS</button>
+    </div>
+    <div class="debug-note">Apply re-runs alerts, death &amp; sodium checks. Force LA shows the ending for the current romance/cash.</div>`;
+}
+function applyDebug() {
+  if (typeof G === 'undefined' || !G || !G.chloe) return;
+  const gv = (id) => { const e = document.getElementById(id); return (e && e.value !== '') ? parseInt(e.value, 10) : null; };
+  const setStat = (who, stat, id) => { const v = gv(id); if (v !== null && !isNaN(v)) G[who][stat] = clampStat(who, stat, v); };
+  setStat('chloe','health','dbg-health');
+  setStat('chloe','focus','dbg-focus');
+  setStat('chloe','morale','dbg-morale');
+  setStat('chloe','sodium','dbg-sodium');
+  setStat('chloe','stress','dbg-stress');
+  const gas = gv('dbg-gas');     if (gas  !== null && !isNaN(gas))  G.chloe.gas = Math.min(statMax('chloe','gas'), Math.max(0, gas));
+  const money = gv('dbg-money'); if (money !== null && !isNaN(money)) G.chloe.money = money;
+  const rom = gv('dbg-romance'); if (rom  !== null && !isNaN(rom))  G.chloe.origins_romance = rom;
+  const cow = gv('dbg-cowboy');  if (cow  !== null && !isNaN(cow) && G.cowboy) G.cowboy.health = clampStat('cowboy','health', cow);
+  const mile = gv('dbg-mile');   if (mile !== null && !isNaN(mile) && G.route) G.mile = Math.max(0, Math.min(G.route.totalMiles, mile));
+  renderSidebar();
+  checkAlerts();
+  const go = checkGameOver();
+  if (go) { document.getElementById('debug-panel').style.display = 'none'; showGameOver(go); return; }
+  if (G.chloe.sodium >= 100) { document.getElementById('debug-panel').style.display = 'none'; showSodiumHorizon(); return; }
+}
+function debugWin() {
+  if (typeof G === 'undefined' || !G || !G.route) return;
+  document.getElementById('debug-panel').style.display = 'none';
+  G.mile = G.route.totalMiles;
+  renderSidebar();
+  showWin();
+}
+function debugHorizon() {
+  if (typeof G === 'undefined' || !G || !G.chloe) return;
+  document.getElementById('debug-panel').style.display = 'none';
+  G.chloe.sodium = 100;
+  renderSidebar();
+  showSodiumHorizon();
+}
+function debugUnlockArtifacts() {
+  if (typeof ARTIFACTS === 'undefined') return;
+  saveCollectedArtifacts(Object.keys(ARTIFACTS));   // mark every artifact collected
+  const p = document.getElementById('debug-panel'); if (p) p.style.display = 'none';
+  if (typeof G !== 'undefined' && G && G.chloe) renderSidebar();
+  awardAchievement('game_excavator');               // and the all-artifacts badge
+}
+
+// ════════════════════════════════════════════════════
 //  MUSIC PLAYER (bottom-right) — loops the chosen track
 // ════════════════════════════════════════════════════
 const MUSIC_KEY = 'oakland_trail_music_v1';
@@ -8399,6 +8536,8 @@ function renderHomeScreen() {
       <button class="home-tab" onclick="renderArtifactsScreen()">VIEW ARTIFACTS</button>
       <button class="home-tab" onclick="renderAchievementsScreen()">ACHIEVEMENTS</button>
     </div>
+    <button class="home-tab" style="margin-top:22px;" onclick="openSaveCode()">💾 SAVE CODE</button>
+    <div class="savecode-hint">Back up your artifacts, achievements &amp; coins — copy your code so you never lose progress.</div>
     <button class="reset-link" onclick="resetProgress()">↺ Reset all progress</button>
   </div>`;
 }
@@ -8417,6 +8556,90 @@ function resetProgress() {
   applyScheme(currentSchemeIndex());          // back to the default theme
   if (typeof populateThemeDock === 'function') populateThemeDock();
   renderHomeScreen();
+}
+
+// ════════════════════════════════════════════════════
+//  SAVE CODE — back up / restore progress (survives browser eviction)
+// ════════════════════════════════════════════════════
+// Compact format "C1.art.ach.rev.coins.hint.outfits.reg" — each unlock list is
+// a bitmask (hex) over the game's fixed item order, so the code stays short.
+// NOTE: relies on item order; append new artifacts/achievements at the END so
+// existing codes keep working.
+function _packMask(ordered, arr) {
+  const s = new Set(arr || []);
+  let bits = '';
+  for (const id of ordered) bits += s.has(id) ? '1' : '0';
+  bits = bits.replace(/^0+/, '') || '0';
+  return BigInt('0b' + bits).toString(16);
+}
+function _unpackMask(ordered, hex) {
+  let n;
+  try { n = BigInt('0x' + (hex || '0')); } catch(e){ return []; }
+  let bits = n.toString(2);
+  bits = bits.padStart(ordered.length, '0');
+  if (bits.length > ordered.length) bits = bits.slice(bits.length - ordered.length);
+  const out = [];
+  for (let i = 0; i < ordered.length; i++) if (bits[i] === '1') out.push(ordered[i]);
+  return out;
+}
+function _orders() {
+  const art = (typeof ARTIFACTS !== 'undefined') ? Object.keys(ARTIFACTS) : [];
+  const ach = (typeof ACHIEVEMENTS !== 'undefined') ? Object.keys(ACHIEVEMENTS) : [];
+  const out = (typeof OUTFIT_PRICES !== 'undefined') ? Object.keys(OUTFIT_PRICES) : [];
+  return { art, ach, out, rev: [...art, ...ach] };
+}
+function buildSaveCode() {
+  const o = _orders();
+  try {
+    const art  = _packMask(o.art, loadCollectedArtifacts());
+    const ach  = _packMask(o.ach, loadUnlockedAchievements());
+    const rev  = _packMask(o.rev, loadRevealed());
+    const coins = (loadCoins() || 0).toString(36);
+    const hint  = (loadHintCoins() || 0).toString(36);
+    const outf  = _packMask(o.out, loadOwnedOutfits().filter(k => o.out.includes(k)));
+    const reg   = (localStorage.getItem(REGULAR_RUN_KEY) === '1') ? '1' : '0';
+    return ['C1', art, ach, rev, coins, hint, outf, reg].join('.');
+  } catch(e){ return ''; }
+}
+function applySaveCode(code) {
+  const parts = (code || '').trim().split('.');
+  if (parts[0] !== 'C1' || parts.length < 8) return false;
+  const o = _orders();
+  try {
+    localStorage.setItem(ARTIFACT_SAVE_KEY,    JSON.stringify(_unpackMask(o.art, parts[1])));
+    localStorage.setItem(ACHIEVEMENT_SAVE_KEY, JSON.stringify(_unpackMask(o.ach, parts[2])));
+    localStorage.setItem(REVEALED_KEY,         JSON.stringify(_unpackMask(o.rev, parts[3])));
+    const coins = parseInt(parts[4], 36); localStorage.setItem(COIN_KEY,     String(isNaN(coins) ? 0 : coins));
+    const hint  = parseInt(parts[5], 36); localStorage.setItem(HINTCOIN_KEY, String(isNaN(hint)  ? 0 : hint));
+    localStorage.setItem(OUTFITS_KEY,          JSON.stringify(_unpackMask(o.out, parts[6])));
+    if (parts[7] === '1') localStorage.setItem(REGULAR_RUN_KEY, '1'); else localStorage.removeItem(REGULAR_RUN_KEY);
+  } catch(e){ return false; }
+  return true;
+}
+function openSaveCode() {
+  const out = document.getElementById('savecode-out');
+  if (out) out.value = buildSaveCode();
+  const inp = document.getElementById('savecode-in'); if (inp) inp.value = '';
+  const msg = document.getElementById('savecode-msg'); if (msg) msg.textContent = '';
+  document.getElementById('savecode-overlay').classList.add('show');
+}
+function copySaveCode() {
+  const out = document.getElementById('savecode-out');
+  const msg = document.getElementById('savecode-msg');
+  if (!out) return;
+  out.focus(); out.select();
+  let ok = false;
+  try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(out.value); ok = true; } } catch(e){}
+  if (!ok) { try { ok = document.execCommand('copy'); } catch(e){} }
+  if (msg) { msg.textContent = ok ? '✓ Copied! Paste it somewhere safe.' : 'Select the code and copy it manually.'; msg.style.color = ok ? 'var(--good)' : 'var(--muted2)'; }
+}
+function doImportSave() {
+  const inp = document.getElementById('savecode-in');
+  const msg = document.getElementById('savecode-msg');
+  if (!inp) return;
+  const ok = applySaveCode(inp.value);
+  if (msg) { msg.textContent = ok ? '✓ Progress restored!' : '⚠ That code did not work. Check you copied all of it.'; msg.style.color = ok ? 'var(--good)' : 'var(--bad)'; }
+  if (ok) setTimeout(() => { document.getElementById('savecode-overlay').classList.remove('show'); renderHomeScreen(); }, 700);
 }
 
 function renderArtifactsScreen() {
